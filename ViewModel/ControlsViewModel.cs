@@ -1,14 +1,8 @@
 ﻿using Bezier.Processing;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -48,7 +42,7 @@ namespace Bezier.ViewModel
             this.thumbnialImage = thumbnialImage;
             this.polylineLayerCanvas = polylineLayerCanvas;
             this.imageLayerCanvas = imageLayerCanvas;
-            
+
             SetEvents();
         }
 
@@ -58,7 +52,7 @@ namespace Bezier.ViewModel
                 drawer.MoveImageToNextPosition(10);
             else
             {
-                drawer.RotateImage(Math.PI/180);
+                drawer.RotateImage(Math.PI / 180);
             }
         }
 
@@ -79,18 +73,18 @@ namespace Bezier.ViewModel
 
         private void Parameters_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(parameters.IsPolylineVisible))
+            if (e.PropertyName == nameof(parameters.IsPolylineVisible))
             {
-                if(parameters.IsPolylineVisible)
+                if (parameters.IsPolylineVisible)
                 {
                     EnablePolylineCanvasChlidren();
                 }
                 else
                 {
-                    DisablePolylineCanvasChlidren();    
+                    DisablePolylineCanvasChlidren();
                 }
             }
-            if(e.PropertyName == nameof(parameters.IsGrayColors))
+            if (e.PropertyName == nameof(parameters.IsGrayColors))
             {
                 drawer.MoveImageToNextPosition(0);
             }
@@ -153,7 +147,7 @@ namespace Bezier.ViewModel
                 Debug.WriteLine(parameters.Image.PixelFormat);
                 thumbnialImage.Source = new BitmapImage(new Uri(filePath));
                 drawer.LoadImageData();
-                if (animationTimer.IsEnabled)
+                if (animationTimer != null && animationTimer.IsEnabled)
                     animationTimer.Stop();
             }
         }

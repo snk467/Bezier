@@ -1,10 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bezier.Model;
+﻿using Bezier.Model;
+using GalaSoft.MvvmLight;
 using System.Drawing;
 
 namespace Bezier.ViewModel
@@ -26,7 +21,8 @@ namespace Bezier.ViewModel
             Rotation = Rotation.Naive;
             Animation = Animation.Move;
         }
-        public uint NumberOfPoints {
+        public uint NumberOfPoints
+        {
             get
             {
                 return _parameters.NumberOfPoints;
@@ -50,7 +46,8 @@ namespace Bezier.ViewModel
                 RaisePropertyChanged(nameof(IsPolylineVisible));
             }
         }
-        public bool IsGrayColors {
+        public bool IsGrayColors
+        {
             get
             {
                 return _parameters.IsGrayColors;
@@ -61,7 +58,8 @@ namespace Bezier.ViewModel
                 RaisePropertyChanged(nameof(IsGrayColors));
             }
         }
-        public bool IsRunning {
+        public bool IsRunning
+        {
             get
             {
                 return _parameters.IsRunning;
@@ -72,7 +70,8 @@ namespace Bezier.ViewModel
                 RaisePropertyChanged(nameof(IsRunning));
             }
         }
-        public Bitmap Image {
+        public Bitmap Image
+        {
             get
             {
                 return _parameters.Image;
@@ -83,7 +82,8 @@ namespace Bezier.ViewModel
                 RaisePropertyChanged(nameof(Image));
             }
         }
-        public Rotation Rotation {
+        public Rotation Rotation
+        {
             get
             {
                 return _parameters.Rotation;
@@ -94,7 +94,8 @@ namespace Bezier.ViewModel
                 RaisePropertyChanged(nameof(Rotation));
             }
         }
-        public Animation Animation {
+        public Animation Animation
+        {
             get
             {
                 return _parameters.Animation;

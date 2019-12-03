@@ -1,24 +1,19 @@
 ﻿using Bezier.ViewModel;
-using System.Collections.Generic;
-using System.Windows.Controls;
-using System.Linq;
-using System;
-using System.Windows.Shapes;
-using System.Windows.Media;
-using System.Windows.Interop;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Numerics;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Newtonsoft.Json;
-using Rectangle = System.Drawing.Rectangle;
+using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
-using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace Bezier.Processing
 {
@@ -99,8 +94,8 @@ namespace Bezier.Processing
             SetRotatedImageOnImageCanvas((int)pointsOnCurve[currentImagePosition].X - imageData.Width / 2, (int)pointsOnCurve[currentImagePosition].Y - imageData.Height / 2);
             RefreshImageBackground();
 
-            
-            
+
+
         }
         internal void MoveImageToNextPosition(int jump)
         {
@@ -218,12 +213,6 @@ namespace Bezier.Processing
                 SetPolylineCanvasPixel((int)result.X, (int)result.Y, Colors.Black);
             });
 
-            //Wersja sekwencyjna
-            //for (float u = 0; u <= 1; u += 1e-4f)
-            //{
-            //    Vector2 result = DeCasteljau(controlPoints, u);
-            //    SetPixel((int)result.X, (int)result.Y, Colors.Black);
-            //}
             RefreshPolylineBackground();
         }
         private Vector2 DeCasteljau(List<Vector2> controlPoints, float u)
@@ -246,15 +235,6 @@ namespace Bezier.Processing
             polylineCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 2)] = color.R;
             polylineCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 3)] = color.A;
         }
-        //public void SetImageCanvasPixel(int x, int y, Color color)
-        //{
-        //    if (x < 0 || y < 0 || x > imageCanvasBackground.Width || y > imageCanvasBackground.Height)
-        //        return;
-        //    imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 0)] = color.B;
-        //    imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 1)] = color.G;
-        //    imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 2)] = color.R;
-        //    imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 3)] = color.A;
-        //}
         public void SetImageCanvasPixel(int x, int y, byte R, byte G, byte B, byte A)
         {
             if (x < 0 || y < 0 || x >= canvasWidth || y >= canvasHeight)
@@ -262,7 +242,7 @@ namespace Bezier.Processing
 
             byte grayScale = (byte)(0.299 * R + 0.587 * G + 0.114 * B);
 
-            imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 0)] = parameters.IsGrayColors? grayScale : B;
+            imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 0)] = parameters.IsGrayColors ? grayScale : B;
             imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 1)] = parameters.IsGrayColors ? grayScale : G;
             imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 2)] = parameters.IsGrayColors ? grayScale : R;
             imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 3)] = A;
@@ -348,15 +328,6 @@ namespace Bezier.Processing
                 });
             else
                 SetRotatedImageOnImageCanvas(startX, startY);
-
-
-            //for (int x = 0; x < imageData.Width; x++)
-            //{
-            //    for (int y = 0; y < imageData.Height; y++)
-            //    {
-            //        SetImageCanvasPixel(startX + x, startY + y, imageBytes[ImageDataPixelIndex(x, y, 2)], imageBytes[ImageDataPixelIndex(x, y, 1)], imageBytes[ImageDataPixelIndex(x, y, 0)], 200);
-            //    }
-            //}
         }
         private void SetRotatedImageOnImageCanvas(int startX, int startY)
         {
@@ -371,9 +342,9 @@ namespace Bezier.Processing
                     }
                 });
             else
-            {             
+            {
 
-                if(angle > Math.PI / 4 && angle <= Math.PI * (3/4.0))
+                if (angle > Math.PI / 4 && angle <= Math.PI * (3 / 4.0))
                 {
                     imagePixelsColorsSource = Rotate90(imagePixelsColorsSource);
                     shearAngle = angle - Math.PI / 2;
@@ -386,7 +357,7 @@ namespace Bezier.Processing
                 else if (angle > Math.PI * (5 / 4.0) && angle <= Math.PI * (7 / 4.0))
                 {
                     imagePixelsColorsSource = Rotate270(imagePixelsColorsSource);
-                    shearAngle = angle - Math.PI * (3/2.0);
+                    shearAngle = angle - Math.PI * (3 / 2.0);
                 }
                 else
                 {
@@ -394,7 +365,7 @@ namespace Bezier.Processing
                 }
 
                 shearSin = (float)Math.Sin(shearAngle);
-                shearTan = (float)Math.Tan(shearAngle/2);
+                shearTan = (float)Math.Tan(shearAngle / 2);
 
                 List<Vector2> vertexPoints = new List<Vector2>(4);
 
@@ -431,17 +402,15 @@ namespace Bezier.Processing
                 {
                     for (int y = 0; y < tmp.GetLength(1); y++)
                     {
-                        tmp[x, y].X = imagePixelsColorsSource[imagePixelsColorsSource.GetLength(0) / 2 - tmp.GetLength(0) / 2 + x, imagePixelsColorsSource.GetLength(1) / 2 - tmp.GetLength(1) / 2 + y].X;
-                        tmp[x, y].Y = imagePixelsColorsSource[imagePixelsColorsSource.GetLength(0) / 2 - tmp.GetLength(0) / 2 + x, imagePixelsColorsSource.GetLength(1) / 2 - tmp.GetLength(1) / 2 + y].Y;
-                        tmp[x, y].Z = imagePixelsColorsSource[imagePixelsColorsSource.GetLength(0) / 2 - tmp.GetLength(0) / 2 + x, imagePixelsColorsSource.GetLength(1) / 2 - tmp.GetLength(1) / 2 + y].Z;
-                        tmp[x, y].W = imagePixelsColorsSource[imagePixelsColorsSource.GetLength(0) / 2 - tmp.GetLength(0) / 2 + x, imagePixelsColorsSource.GetLength(1) / 2 - tmp.GetLength(1) / 2 + y].W;
+                        tmp[x, y] = imagePixelsColorsSource[imagePixelsColorsSource.GetLength(0) / 2 - tmp.GetLength(0) / 2 + x, imagePixelsColorsSource.GetLength(1) / 2 - tmp.GetLength(1) / 2 + y];
                     }
-                });                
+                });
 
                 imagePixelsColorsSource = tmp;
 
 
-                Parallel.For(0, imagePixelsColorsSource.GetLength(0), (x) => {
+                Parallel.For(0, imagePixelsColorsSource.GetLength(0), (x) =>
+                {
                     for (int y = 0; y < imagePixelsColorsSource.GetLength(1); y++)
                     {
                         SetImageCanvasPixel((int)pointsOnCurve[currentImagePosition].X - imagePixelsColorsSource.GetLength(0) / 2 + x, (int)pointsOnCurve[currentImagePosition].Y - imagePixelsColorsSource.GetLength(1) / 2 + y, (byte)imagePixelsColorsSource[x, y].Z, (byte)imagePixelsColorsSource[x, y].Y, (byte)imagePixelsColorsSource[x, y].X, (byte)imagePixelsColorsSource[x, y].W);
@@ -466,12 +435,13 @@ namespace Bezier.Processing
             if (shearAngle > 0)
                 offset = 0;
 
-            Parallel.For(0, imagePixelsColorsSource.GetLength(0), (x) => {
+            Parallel.For(0, imagePixelsColorsSource.GetLength(0), (x) =>
+            {
                 float f = b * x - (float)Math.Floor(b * x);
                 for (int y = 0; y < imagePixelsColorsSource.GetLength(1); y++)
                 {
                     if (y + 1 < imagePixelsColorsSource.GetLength(1))
-                        imagePixelsColorsDestination[x, (int)(y + b * x) + offset] = f * imagePixelsColorsSource[x, y] + (1-f) * imagePixelsColorsSource[x, y + 1];
+                        imagePixelsColorsDestination[x, (int)(y + b * x) + offset] = f * imagePixelsColorsSource[x, y] + (1 - f) * imagePixelsColorsSource[x, y + 1];
                     else
                         imagePixelsColorsDestination[x, (int)(y + b * x) + offset] = imagePixelsColorsSource[x, y];
                 }
@@ -487,10 +457,10 @@ namespace Bezier.Processing
             float a = -shearTan;
             if (a == 0)
             {
-               return;
+                return;
             }
             int offset = (int)Math.Round(Math.Abs(a) * imagePixelsColorsSource.GetLength(1));
-            
+
 
             int xSize = imagePixelsColorsSource.GetLength(0) + offset;
             int ySize = imagePixelsColorsSource.GetLength(1);
@@ -531,7 +501,7 @@ namespace Bezier.Processing
             y = ynew + pointsOnCurve[currentImagePosition].Y;
             return new Vector2(x, y);
         }
-        
+
         public void LoadImageData()
         {
             if (parameters.Image == null)
@@ -548,8 +518,8 @@ namespace Bezier.Processing
             imagePixelsColorsDefault = new Vector4[imageData.Width, imageData.Height];
             dim = (int)Math.Round(Math.Sqrt(Math.Pow(imageData.Width, 2) + Math.Pow(imageData.Height, 2)));
 
-
-
+            angle = 0;
+            currentImagePosition = 0;
 
             for (int i = 0; i < imageData.Width; i++)
             {
@@ -647,7 +617,7 @@ namespace Bezier.Processing
             {
                 for (int y = 0; y < source.GetLength(1); y++)
                 {
-                    result[source.GetLength(1) - y - 1,x] = source[x, y];
+                    result[source.GetLength(1) - y - 1, x] = source[x, y];
                 }
             }
 
@@ -662,7 +632,7 @@ namespace Bezier.Processing
             {
                 for (int y = 0; y < source.GetLength(1); y++)
                 {
-                    result[source.GetLength(0) - x - 1,source.GetLength(1) - y - 1] = source[x, y];
+                    result[source.GetLength(0) - x - 1, source.GetLength(1) - y - 1] = source[x, y];
                 }
             }
 
