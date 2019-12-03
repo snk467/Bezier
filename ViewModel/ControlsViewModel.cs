@@ -122,9 +122,8 @@ namespace Bezier.ViewModel
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (drawer == null || drawer.IsEmpty() || parameters.Image == null)
-                return;
-            animationTimer.Stop();
+            if (animationTimer.IsEnabled)
+                animationTimer.Stop();
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -153,7 +152,9 @@ namespace Bezier.ViewModel
                 parameters.Image = new System.Drawing.Bitmap(parameters.Image, parameters.Image.Width / 10, parameters.Image.Height / 10);
                 Debug.WriteLine(parameters.Image.PixelFormat);
                 thumbnialImage.Source = new BitmapImage(new Uri(filePath));
-                drawer.LoadImageData();                
+                drawer.LoadImageData();
+                if (animationTimer.IsEnabled)
+                    animationTimer.Stop();
             }
         }
 
