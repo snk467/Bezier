@@ -136,7 +136,17 @@ namespace Bezier.ViewModel
             {
                 filePath = openFileDialog.FileName;
                 parameters.Image = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(filePath);
-                parameters.Image = new System.Drawing.Bitmap(parameters.Image, parameters.Image.Width / 10, parameters.Image.Height / 10);               
+
+                // Resize image to reasonable size 
+                int referenceSize = 256;
+                double rescaleValue = 1.0;
+                if (Math.Max(parameters.Image.Height, parameters.Image.Width) > referenceSize)
+                {
+                    rescaleValue = parameters.Image.Width >= parameters.Image.Height
+                        ? (double)parameters.Image.Width / referenceSize
+                        : (double)parameters.Image.Height / referenceSize;
+                }
+                parameters.Image = new System.Drawing.Bitmap(parameters.Image, (int)Math.Floor(parameters.Image.Width / rescaleValue), (int)Math.Floor(parameters.Image.Height / rescaleValue));               
                 Debug.WriteLine(parameters.Image.PixelFormat);
                 thumbnialImage.Source = Bitmap2BitmapSource(parameters.Image);
                 drawer.LoadImageData();
