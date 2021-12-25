@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -55,7 +56,6 @@ namespace Bezier.ViewModel
                 drawer.RotateImage(Math.PI / 180);
             }
         }
-
         private void SetEvents()
         {
             generateButton.Click += GenerateButton_Click;
@@ -70,7 +70,6 @@ namespace Bezier.ViewModel
             polylineLayerCanvas.MouseUp += Canvas_MouseUp;
             parameters.PropertyChanged += Parameters_PropertyChanged;
         }
-
         private void Parameters_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(parameters.IsPolylineVisible))
@@ -89,7 +88,6 @@ namespace Bezier.ViewModel
                 drawer.MoveImageToNextPosition(0);
             }
         }
-
         private void DisablePolylineCanvasChlidren()
         {
             for (int i = 0; i < polylineLayerCanvas.Children.Count; i++)
@@ -98,7 +96,6 @@ namespace Bezier.ViewModel
                 polylineLayerCanvas.Children[i].IsHitTestVisible = false;
             }
         }
-
         private void EnablePolylineCanvasChlidren()
         {
             for (int i = 0; i < polylineLayerCanvas.Children.Count; i++)
@@ -107,29 +104,25 @@ namespace Bezier.ViewModel
                 polylineLayerCanvas.Children[i].IsHitTestVisible = true;
             }
         }
-
         private void Canvas_Loaded(object sender, RoutedEventArgs e)
         {
 
             drawer = new Drawer(parameters, polylineLayerCanvas, imageLayerCanvas);
         }
-
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (animationTimer.IsEnabled)
+            if (!(animationTimer is null) && animationTimer.IsEnabled)
                 animationTimer.Stop();
         }
-
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            if (drawer == null || drawer.IsEmpty() || parameters.Image == null)
+            if (drawer is null || drawer.IsEmpty() || parameters.Image is null)
                 return;
-            if (animationTimer == null)
+            if (animationTimer is null)
                 animationTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, animationTimerCallback, Dispatcher.CurrentDispatcher);
             else
                 animationTimer.Start();
         }
-
         private void ImageLoadButton_Click(object sender, RoutedEventArgs e)
         {
             var fileContent = string.Empty;
@@ -143,15 +136,14 @@ namespace Bezier.ViewModel
             {
                 filePath = openFileDialog.FileName;
                 parameters.Image = (System.Drawing.Bitmap)System.Drawing.Image.FromFile(filePath);
-                parameters.Image = new System.Drawing.Bitmap(parameters.Image, parameters.Image.Width / 10, parameters.Image.Height / 10);
+                parameters.Image = new System.Drawing.Bitmap(parameters.Image, parameters.Image.Width / 10, parameters.Image.Height / 10);               
                 Debug.WriteLine(parameters.Image.PixelFormat);
-                thumbnialImage.Source = new BitmapImage(new Uri(filePath));
+                thumbnialImage.Source = Bitmap2BitmapSource(parameters.Image);
                 drawer.LoadImageData();
                 if (animationTimer != null && animationTimer.IsEnabled)
                     animationTimer.Stop();
             }
         }
-
         private void SavePolylineButton_Click(object sender, RoutedEventArgs e)
         {
             if (drawer.IsEmpty())
@@ -169,7 +161,6 @@ namespace Bezier.ViewModel
             if (saveFileDialog.ShowDialog() == true)
                 File.WriteAllText(saveFileDialog.FileName, drawer.GetPointsJson());
         }
-
         private void LoadPolylineButton_Click(object sender, RoutedEventArgs e)
         {
             var fileContent = string.Empty;
@@ -190,7 +181,6 @@ namespace Bezier.ViewModel
             }
 
         }
-
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -208,6 +198,17 @@ namespace Bezier.ViewModel
             if (!parameters.IsPolylineVisible)
                 DisablePolylineCanvasChlidren();
         }
+
+        private BitmapSource Bitmap2BitmapSource(System.Drawing.Bitmap bitmap)
+        {
+            BitmapSource i = Imaging.CreateBitmapSourceFromHBitmap(
+                           bitmap.GetHbitmap(),
+                           IntPtr.Zero,
+                           Int32Rect.Empty,
+                           BitmapSizeOptions.FromEmptyOptions());
+            return i;
+        }
+
         //Points movement
         #region 
         private void Canvas_MouseLeave(object sender, MouseEventArgs e)

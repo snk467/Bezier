@@ -39,7 +39,6 @@ namespace Bezier.Processing
 
         int currentImagePosition = 0;
         double angle;
-        //double angleChange;
         float sin;
         float cos;
         bool movingBackwards = false;
@@ -70,10 +69,6 @@ namespace Bezier.Processing
             polylinePoints = new List<Vertex>();
             pointsOnCurve = new Vector2[10000];
             angle = 0;
-            //sin = (float)Math.Sin(angle);
-            //cos = (float)Math.Cos(angle);
-            //tan2 = (float)Math.Tan(angle / 2);
-
         }
 
         internal void RotateImage(double angleChange)
@@ -117,40 +112,6 @@ namespace Bezier.Processing
             ClearImageBackground();
             SetImageOnImageCanvas((int)pointsOnCurve[currentImagePosition].X - imageData.Width / 2, (int)pointsOnCurve[currentImagePosition].Y - imageData.Height / 2);
             RefreshImageBackground();
-        }
-        private double[,] Invert2x2Matrix(double[,] matrix)
-        {
-            if (matrix.Length != 4)
-                throw new ArgumentException();
-            double a = matrix[0, 0];
-            double b = matrix[1, 0];
-            double c = matrix[0, 1];
-            double d = matrix[1, 1];
-
-            double det = a * d - b * c;
-
-            if (det == 0)
-                throw new ArgumentException();
-
-            double[,] result = new double[2, 2];
-
-            result[0, 0] = d / det;
-            result[1, 0] = -b / det;
-            result[0, 1] = -c / det;
-            result[1, 1] = a / det;
-            return result;
-        }
-
-        private Vector2 Multiply2x2MatrixBy2dVector(double[,] matrix, int x, int y)
-        {
-            if (matrix.Length != 4)
-                throw new ArgumentException();
-            double a = matrix[0, 0];
-            double b = matrix[1, 0];
-            double c = matrix[0, 1];
-            double d = matrix[1, 1];
-
-            return new Vector2((float)(a * x + b * y), (float)(c * x + d * y));
         }
         public void GeneratePoints()
         {
@@ -305,16 +266,6 @@ namespace Bezier.Processing
                     imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 3)] = color.A;
                 }
             });
-            //for (int x = 0; x < canvasWidth; x++)
-            //{
-            //    for (int y = 0; y < canvasHeight; y++)
-            //    {
-            //        imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 0)] = 0;
-            //        imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 1)] = 0;
-            //        imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 2)] = 255;
-            //        imageCanvasBackgroundPixels[BackgroundPixelIndex(x, y, 3)] = 0;
-            //    }
-            //}
         }
         private void SetImageOnImageCanvas(int startX, int startY)
         {
@@ -420,7 +371,6 @@ namespace Bezier.Processing
             }
 
         }
-
         private void ShearY()
         {
             float b = shearSin;
@@ -451,7 +401,6 @@ namespace Bezier.Processing
 
             imagePixelsColorsSource = imagePixelsColorsDestination;
         }
-
         private void ShearX()
         {
             float a = -shearTan;
@@ -484,7 +433,6 @@ namespace Bezier.Processing
 
             imagePixelsColorsSource = imagePixelsColorsDestination;
         }
-
         private Vector2 NaiveRotatePixel(float x, float y)
         {
 
@@ -501,7 +449,6 @@ namespace Bezier.Processing
             y = ynew + pointsOnCurve[currentImagePosition].Y;
             return new Vector2(x, y);
         }
-
         public void LoadImageData()
         {
             if (parameters.Image == null)
@@ -588,72 +535,48 @@ namespace Bezier.Processing
         {
             return y * imageStride + channels * x + z;
         }
-
-        private void Copy2dVector4ArrayToSquereArray(Vector4[,] to, Vector4[,] from)
-        {
-            if (to.Length < from.Length)
-                return;
-            if (to.GetLength(0) != to.GetLength(1))
-                return;
-
-            int offsetX = (int)Math.Round((to.GetLength(0) - from.GetLength(0)) / 2.0);
-            int offsetY = (int)Math.Round((to.GetLength(1) - from.GetLength(1)) / 2.0);
-
-            for (int x = offsetX; x < offsetX; x++)
-            {
-                for (int y = offsetY; y < offsetY; y++)
-                {
-                    to[x, y] = from[x - offsetX, y - offsetY];
-                }
-            }
-
-        }
-
         private Vector4[,] Rotate90(Vector4[,] source)
         {
             Vector4[,] result = new Vector4[source.GetLength(1), source.GetLength(0)];
 
-            for (int x = 0; x < source.GetLength(0); x++)
+            Parallel.For(0, source.GetLength(0), x =>
             {
                 for (int y = 0; y < source.GetLength(1); y++)
                 {
                     result[source.GetLength(1) - y - 1, x] = source[x, y];
                 }
-            }
+            });
 
             return result;
         }
-
         private Vector4[,] Rotate180(Vector4[,] source)
         {
             Vector4[,] result = new Vector4[source.GetLength(0), source.GetLength(1)];
 
-            for (int x = 0; x < source.GetLength(0); x++)
+            Parallel.For(0, source.GetLength(0), x =>
             {
                 for (int y = 0; y < source.GetLength(1); y++)
                 {
                     result[source.GetLength(0) - x - 1, source.GetLength(1) - y - 1] = source[x, y];
                 }
-            }
+            });
 
             return result;
         }
-
         private Vector4[,] Rotate270(Vector4[,] source)
         {
             Vector4[,] result = new Vector4[source.GetLength(1), source.GetLength(0)];
 
-            for (int x = 0; x < source.GetLength(0); x++)
+            Parallel.For(0, source.GetLength(0), x =>
             {
                 for (int y = 0; y < source.GetLength(1); y++)
                 {
-                    result[y, source.GetLength(1) - x - 1] = source[x, y];
+                    result[y, source.GetLength(0) - x - 1] = source[x, y];
                 }
-            }
+            });
 
             return result;
         }
-
         private Vector2 TransformPoint(int x, int y)
         {
             float a = -shearTan;
